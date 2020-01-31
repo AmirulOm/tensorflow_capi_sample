@@ -2,7 +2,7 @@
 
 Here is use case that I believe some Non Data Engineer/Data Scientist is facing. 
 
-**How do I deliver an Tensorflow model that I trained in Python but deploy it in pure C/C++ code on the client side with no option to choice to setup python environment and all files has to be in binaries??**
+**How do I deliver an Tensorflow model that I trained in Python but deploy it in pure C/C++ code on the client side without setup python environment at their side and on top of that all files has to be in binaries??**
 
 The answer for that is to use the Tensorflow C or C++ API. In this article we only look how to use the C API (not the C++/tensorflowlite) that runs only in CPU. 
 
