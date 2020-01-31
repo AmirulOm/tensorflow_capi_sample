@@ -1,4 +1,4 @@
-# Tutorial on deploying Tensorflow using Tensorflow's C API (CPU only)
+# Deploying Tensorflow as C/C++ executable
 
 Here is use case that I believe some Non Data Engineer/Data Scientist is facing. 
 
