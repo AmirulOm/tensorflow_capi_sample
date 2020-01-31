@@ -166,3 +166,51 @@ Activate the environment:
 conda activate tf
 ```
 
+by now you would be able to call `saved_model_cli` through command line.
+
+We would need to extract the graph name for the input tensor and output tensor and use that info during calling C API later on. Here's how:
+
+```bash
+saved_model_cli show --dir <path_to_saved_model_folder> 
+```
+
+running this and replaced the appropriate path, you should get an output like below:
+```
+The given SavedModel contains the following tag-sets:
+serve
+```
+use this tag-set to further drill into the tensor graph, here's how:
+```
+saved_model_cli show --dir <path_to_saved_model_folder> --tag_set serve 
+```
+and you should get an output like below:
+```
+The given SavedModel MetaGraphDef contains SignatureDefs with the following keys:
+SignatureDef key: "__saved_model_init_op"
+SignatureDef key: "serving_default"
+```
+
+using `serving_default` signature key into command to print out the tensor node:
+```
+saved_model_cli show --dir <path_to_saved_model_folder> --tag_set serve --signature_def serving_default
+```
+
+and you should get an output like below:
+```
+The given SavedModel SignatureDef contains the following input(s):
+  inputs['input_1'] tensor_info:
+      dtype: DT_INT64
+      shape: (-1, 1)
+      name: serving_default_input_1:0
+The given SavedModel SignatureDef contains the following output(s):
+  outputs['output_1'] tensor_info:
+      dtype: DT_FLOAT
+      shape: (-1, 1)
+      name: StatefulPartitionedCall:0
+Method name is: tensorflow/serving/predict
+```
+here we would need the name `serving_default_input_1` and `StatefulPartitionedCall` later to be use in the C API.
+
+# 3. Building C/C++ code
+
+T
