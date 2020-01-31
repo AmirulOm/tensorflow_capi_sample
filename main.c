@@ -95,6 +95,4 @@ int main()
     printf("Result Tensor :\n");
     printf("%f\n",offsets[0]);
     
-
-
 }
