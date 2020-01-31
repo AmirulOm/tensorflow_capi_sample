@@ -13,14 +13,14 @@ int main()
     TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
     TF_Buffer* RunOpts = NULL;
 
-    const char* saved_model_dir = "/home/amirul/project/tf/model/";
+    const char* saved_model_dir = "model/";
     const char* tags = "serve"; // default model serving tag; can change in future
     int ntags = 1;
 
     TF_Session* Session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, saved_model_dir, &tags, ntags, Graph, NULL, Status);
     if(TF_GetCode(Status) == TF_OK)
     {
-        printf("TF_LoadSessionFromSavedModel is successk\n");
+        printf("TF_LoadSessionFromSavedModel OK\n");
     }
     else
     {
@@ -34,7 +34,9 @@ int main()
 
     TF_Output t0 = {TF_GraphOperationByName(Graph, "serving_default_input_1"), 0};
     if(t0.oper == NULL)
-        printf("ERROR\n");
+        printf("ERROR: Failed TF_GraphOperationByName serving_default_input_1\n");
+    else
+	printf("TF_GraphOperationByName serving_default_input_1 is OK\n");
     
     Input[0] = t0;
     
@@ -44,7 +46,9 @@ int main()
 
     TF_Output t2 = {TF_GraphOperationByName(Graph, "StatefulPartitionedCall"), 0};
     if(t2.oper == NULL)
-        printf("ERROR\n");
+        printf("ERROR: Failed TF_GraphOperationByName StatefulPartitionedCall\n");
+    else	
+	printf("TF_GraphOperationByName StatefulPartitionedCall is OK\n");
     
     Output[0] = t2;
 
@@ -60,8 +64,10 @@ int main()
     TF_Tensor* int_tensor = TF_NewTensor(TF_INT64, dims, ndims, data, ndata, &NoOpDeallocator, 0);
     if (int_tensor != NULL)
     {
-        printf("TF_NewTensor is success");
+        printf("TF_NewTensor is OK\n");
     }
+    else
+	printf("ERROR: Failed TF_NewTensor\n");
     
     InputValues[0] = int_tensor;
     
@@ -70,7 +76,7 @@ int main()
 
     if(TF_GetCode(Status) == TF_OK)
     {
-        printf("Session is success\n");
+        printf("Session is OK\n");
     }
     else
     {
@@ -86,11 +92,9 @@ int main()
 
     void* buff = TF_TensorData(OutputValues[0]);
     float* offsets = buff;
-    printf("Result Tensor of size (1,5):\n");
-    for (size_t i = 0; i < 5; ++i)
-    {
-        printf("%f\n",offsets[i]);
-    }
+    printf("Result Tensor :\n");
+    printf("%f\n",offsets[0]);
+    
 
 
 }
