@@ -20,7 +20,7 @@ Also, i would to credits Vlad Dovgalecs and his [article](https://medium.com/@vl
 # Tutorial structure
  This article will be a bit lenghty. but here is what we will do, step by step:
 
- 1. Get Tensorflow C API from Github to get the C API headers/binaries
+ 1. Clone Tensorflow source code and compile to get the C API headers/binaries
  2. Build a simpliest model using Python & Tensorflow and export it to tf model that can be read by C API
  3. Build a simple C code and compile it with `gcc` and run it like a normal execution file.
 
@@ -28,7 +28,7 @@ So here we go,
 
 # 1. Getting the Tensorflow C API
 As far as i know, there are 2 ways to get those C API header.  
-- Downloads from the Tensorflow website (tends not to be up to date binaries) **OR**
+- Download the precompiled Tensorflow C API from website (tends not to be up to date binaries) **OR**
 - Clone and compile from the source code (Long process, but if things doesn't work, we can debug and look at the API)
 
 So I gonna show how to compile their code and use their binaries.
