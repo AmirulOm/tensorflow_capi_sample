@@ -13,7 +13,7 @@ int main()
     TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
     TF_Buffer* RunOpts = NULL;
 
-    const char* saved_model_dir = "model/";
+    const char* saved_model_dir = "lstm2/";
     const char* tags = "serve"; // default model serving tag; can change in future
     int ntags = 1;
 
@@ -30,7 +30,7 @@ int main()
     //****** Get input tensor
     //TODO : need to use saved_model_cli to read saved_model arch
     int NumInputs = 1;
-    TF_Output* Input = malloc(sizeof(TF_Output) * NumInputs);
+    TF_Output* Input = (TF_Output*)malloc(sizeof(TF_Output) * NumInputs);
 
     TF_Output t0 = {TF_GraphOperationByName(Graph, "serving_default_input_1"), 0};
     if(t0.oper == NULL)
@@ -42,7 +42,7 @@ int main()
     
     //********* Get Output tensor
     int NumOutputs = 1;
-    TF_Output* Output = malloc(sizeof(TF_Output) * NumOutputs);
+    TF_Output* Output = (TF_Output*)malloc(sizeof(TF_Output) * NumOutputs);
 
     TF_Output t2 = {TF_GraphOperationByName(Graph, "StatefulPartitionedCall"), 0};
     if(t2.oper == NULL)
@@ -54,14 +54,18 @@ int main()
 
     //********* Allocate data for inputs & outputs
     TF_Tensor** InputValues = (TF_Tensor**)malloc(sizeof(TF_Tensor*)*NumInputs);
-    TF_Tensor** OutputValues = malloc(sizeof(TF_Tensor*)*NumOutputs);
+    TF_Tensor** OutputValues = (TF_Tensor**)malloc(sizeof(TF_Tensor*)*NumOutputs);
 
     int ndims = 2;
-    int64_t dims[] = {1,1};
-    int64_t data[] = {20};
-    int ndata = sizeof(int64_t); // This is tricky, it number of bytes not number of element
+    int64_t dims[] = {1,30};
+    float data[1*30] ;//= {1,1,1,1,1,1,1,1,1,1};
+    for(int i=0; i< (1*30); i++)
+    {
+        data[i] = 1.00;
+    }
+    int ndata = sizeof(float)*1*30 ;// This is tricky, it number of bytes not number of element
 
-    TF_Tensor* int_tensor = TF_NewTensor(TF_INT64, dims, ndims, data, ndata, &NoOpDeallocator, 0);
+    TF_Tensor* int_tensor = TF_NewTensor(TF_FLOAT, dims, ndims, data, ndata, &NoOpDeallocator, 0);
     if (int_tensor != NULL)
     {
         printf("TF_NewTensor is OK\n");
@@ -91,9 +95,13 @@ int main()
 
 
     void* buff = TF_TensorData(OutputValues[0]);
-    float* offsets = buff;
+    float* offsets = (float*)buff;
     printf("Result Tensor :\n");
-    printf("%f\n",offsets[0]);
+    for(int i=0;i<10;i++)
+    {
+        printf("%f\n",offsets[i]);
+    }
+    
     
 
 
