@@ -1,37 +1,37 @@
 # Deploying Tensorflow as C/C++ executable
 
-Here is use case that I believe some Non Data Engineer/Data Scientist is facing. 
+Here's a scenario that I believe some non-data engineers or data scientists are confronted with.
 
-**How do I deliver an Tensorflow model that I trained in Python but deploy it in pure C/C++ code on the client side without setup python environment at their side and on top of that all files has to be in binaries??**
+**How do I deliver a Tensorflow model that I trained in Python but deploy in pure C/C++ code on the client side without setting up a Python environment on their side, and on top of that, all files have to be binaries?**
 
-The answer for that is to use the Tensorflow C or C++ API. In this article we only look how to use the C API (not the C++/tensorflowlite) that runs only in CPU. 
+The answer to that is to use the Tensorflow C or C++ API. In this article, we only look at how to use the C API (not the C++/TensorflowLite) that runs only on the CPU.
 
-You would think that the *famous* Tensorflow would have documentation about how to compile simple C solution with Tensorflow but as up until now (TF2.1) there so little to none information about that. I'm here to share my finding.
+You would think that the *famous* Tensorflow would have documentation about how to compile a simple C solution with Tensorflow, but as of now (TF2.1), there is little to no information about that. I'm here to share my findings.
 
-This article will explain how to run common C program using Tensorflow's C API 2.1. The environment that I will use throughout the article is as follow:
+This article will explain how to run a common C programme using Tensorflow's C API 2.1. The environment that I will use throughout the article is as follows:
 
 - OS : Linux ( Tested and worked on un fresh Ubuntu 19.10/OpenSuse Tumbleweed)
 - Latest GCC
 - Tensorflow from [Github](https://github.com/tensorflow/tensorflow) (master branch 2.1)
 - No GPU
 
-Also, i would to credits Vlad Dovgalecs and his [article](https://medium.com/@vladislavsd/undocumented-tensorflow-c-api-b527c0b4ef6) at Medium as this tutorial largely based and improved from his findings.
+Also, I would like to credit Vlad Dovgalecs and his [article](https://medium.com/@vladislavsd/undocumented-tensorflow-c-api-b527c0b4ef6) at Medium, as this tutorial is largely based on and improved upon his findings.
 
 # Tutorial structure
- This article will be a bit lenghty. but here is what we will do, step by step:
+This article will be a bit lengthy. But here is what we will do, step by step:
 
- 1. Clone Tensorflow source code and compile to get the C API headers/binaries
- 2. Build a simpliest model using Python & Tensorflow and export it to tf model that can be read by C API
- 3. Build a simple C code and compile it with `gcc` and run it like a normal execution file.
+1. Clone Tensorflow source code and compile to get the C API headers and binaries.
+2. Build the simpliest model using Python and Tensorflow and export it as a TF model that can be read by the C API.
+3. Build a simple C program, compile it with "gcc," and run it like a normal execution file.
 
-So here we go,
+So here we go:
 
 # 1. Getting the Tensorflow C API
-As far as i know, there are 2 ways to get those C API header.  
-- Download the precompiled Tensorflow C API from website (tends not to be up to date binaries) **OR**
-- Clone and compile from the source code (Long process, but if things doesn't work, we can debug and look at the API)
+As far as I know, there are two ways to get those C API headers.
+- Download the precompiled Tensorflow C API from the website (binaries may not be up to date).**OR**
+- Clone and compile from source code (a time-consuming process, but if things don't work, we can debug and examine the API).
 
-So I gonna show how to compile their code and use their binaries.
+So I'm going to show how to compile their code and use their binaries.
 
 ## Step A: clone their projects
 create a folder and clone the project  
@@ -40,7 +40,7 @@ create a folder and clone the project
 git clone  https://github.com/tensorflow/tensorflow.git
 ```
   
-## Step B: Install the tools that is required for the compilation (Bazel, Numpy)
+## Step B: Install the tools that are required for the compilation (Bazel, Numpy)
 
 You would need [Bazel](https://bazel.build/) to compile. Install it on your environment
 
@@ -54,9 +54,9 @@ OpenSuse :
 sudo zypper install bazel 
 ```
 
-Whichever platform you use, make sure the the bazel version is 1.2.1 as this is what the Tensorflow 2.1 is currently using. Might change in future. 
+Whichever platform you use, make sure the Bazel version is 1.2.1, as this is what Tensorflow 2.1 is currently using. This could change in the future. 
 
-Next, we would need to install `Numpy` Pyhton's package (Why would we need a Python package to build a C API??). You can install it however you want as long as it can be referenced back during compilation. But I prefer to install it through [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and have seperate virtual environment for the build. Here's how:
+Next, we would need to instal  `Numpy` Python's package (why would we need a Python package to build a C API?). You can instal it however you want, as long as it can be referenced back during compilation. But I prefer to instal it through [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and have a separate virtual environment for the build. Here's how:
 
 Install Miniconda :
 ```bash 
@@ -74,7 +74,7 @@ we use this environtment later in step D.
 
 ## Step C: Apply patch to the source code (IMPORTANT!)
 
-Tensorflow 2.1 source code has a bug that will make you build failed. Refer to this [issue](https://github.com/clearlinux/distribution/issues/1151). The fix is to apply patch [here](https://github.com/clearlinux-pkgs/tensorflow/blob/master/Add-grpc-fix-for-gettid.patch). I included a file in this repo that can be use as the patch.
+Tensorflow 2.1 source code has a bug that will make you fail to build it. Refer to this [issue](https://github.com/clearlinux/distribution/issues/1151). The fix is to apply a patch [here](https://github.com/clearlinux-pkgs/tensorflow/blob/master/Add-grpc-fix-for-gettid.patch). I included a file in this repository that can be used as the patch.
 ```bash
 # copy/download the "p.patch" file from my repo and past at the root of Tensorflow source code.
 git apply p.patch
@@ -93,19 +93,19 @@ conda activate tf-build # skip this if you already have numpy installed globally
 bazel test -c opt tensorflow/tools/lib_package:libtensorflow_test # note that this will take very long to compile
 bazel build -c opt tensorflow/tools/lib_package:libtensorflow_test
 ```
- Let me **WARN** you again. It takes 2 hours to compile on a VM with Ubuntu with 6 Core configuration. My friend with a 2 core laptop basicly frozed trying to compile this. Here an advice. Run in some server with good CPU/RAM.
+ Let me **WARN** you again. It takes 2 hours to compile on a VM with Ubuntu in a 6-core configuration. My friend with a 2-core laptop basically froze trying to compile this. Here is an advice. Run on a server with a powerful CPU and RAM. 
 
-copy the file at `bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz` and paste to you're desired folder. untar it like below:
+copy the file at `bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz` and paste it to your desired folder. Untar it as follows: 
 ```
 tar -C /usr/local -xzf libtensorflow.tar.gz
 ```
 I untar it at my home folder instead of at `/usr/local` as I was just trying it out.
 
-CONGRATULATION!! YOU MADE IT. compiling tensorflow at least.
+CONGRATULATION!! YOU MADE IT. at least for compiling tensorflow.
 
 # 2. Simple model with Python
 
-For this step, we will create a model using `tf.keras.layers` class and saved the model for us to load later use C API. Refer the full code at `model.py` in the [repo](https://github.com/AmirulOm/tensorflow_capi_sample/blob/master/model.py).
+In this step, we will build a model with the `tf.keras.layers` class and save it to be loaded later with the C API. Refer to the full code at `model.py` in the [repo](https://github.com/AmirulOm/tensorflow_capi_sample/blob/master/model.py).
 
 ## Step A: Write the model
 here is simple model where is has a custom `tf.keras.layers.Model`, with single `dense` layer. Which is initialized with `ones`. Hence the output of this model (from the `def call()`) will produce an output that is similar to the input.
@@ -133,7 +133,7 @@ print(module(input_data))
 module.save('model', save_format='tf')
 ```
 
-Eversince Tensorflow 2.0, Eager execution allow us to run a model without drafting the graph and run through `session`. But in order to save the model ( refer to this line `module.save('model', save_format='tf')`), the graph need to be build before it can save. hence we will need to call the model at least once for it to create the graph. Calling `print(module(input_data))` will force it to create the graph.
+Eversince Tensorflow 2.0, Eager execution allow us to run a model without drafting the graph and run through `session`. But in order to save the model ( refer to this line `module.save('model', save_format='tf')`), the graph needs to be built before it can be saved. Hence, we will need to call the model at least once for it to create the graph. Calling `print(module(input_data))` will force it to create the graph.
 
 Next run the code:
 ```
@@ -150,11 +150,11 @@ To enable them in non-MKL-DNN operations, rebuild TensorFlow with the appropriat
 tf.Tensor([[10.]], shape=(1, 1), dtype=float32)
 ```
 
-You should also see a folder created called `model` created.
+A folder called `model` should also be created. 
 
 ## Step B: Verified the saved model
 
-When we saved a model, it will create a folder and bunch of files inside it. It's basicly store the weights and the graphs of the model. Tensorflow has a tool to dive into this files for us to match the input tensor and the output tensor. It is called `saved_model_cli`. It is a command line tool and comes together when you install Tensorflow.
+When we save a model, it will create a folder with a bunch of files inside it. It basically stores the weights and the graphs of the model. Tensorflow includes a tool for diving into these files and matching the input and output tensors. It is called `saved_model_cli`. It is a command line tool that comes together when you install Tensorflow.
 
 BUT WAIT!, we haven't install tensorflow !!. so basicly there is two way to get `saved_model_cli`
 - Install tensorflow
@@ -175,7 +175,7 @@ conda activate tf
 
 by now you should be able to call `saved_model_cli` through command line.
 
-We would need to extract the graph name for the input tensor and output tensor and use that info during calling C API later on. Here's how:
+We would need to extract the graph names for the input and output tensors and use that information later when calling the C API. Here's how:
 
 ```bash
 saved_model_cli show --dir <path_to_saved_model_folder> 
